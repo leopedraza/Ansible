@@ -1,6 +1,6 @@
 ---
 - name: IIS Status Monitoring and Recovery as Needed
-  hosts: {{ _hosts | default('windows') }}
+  hosts: "{{ _hosts | default('windows') }}"
   tasks:
     - name: Install IIS
       ansible.windows.win_feature:
