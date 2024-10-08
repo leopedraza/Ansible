@@ -1,5 +1,18 @@
 ---
-ansible_connection: winrm
-ansible_winrm_transport: ntlm
-ansible_winrm_server_cert_validation: ignore
-ansible_port: 5986
+- name: IIS Status Monitoring and Recovery as Needed
+  hosts: "{{ _hosts | default('windows') }}"
+  tasks:
+    - name: Install IIS
+      ansible.windows.win_feature:
+        name: Web-Server
+        state: present
+    - name: Start IIS
+      ansible.windows.win_service:
+        name: W3Svc
+        state: started
+    - name: Check IIS Status
+      ansible.windows.win_shell: Get-Service W3Svc | Select-Object -ExpandProperty Status
+      register: iis_status
+    - name: Recover IIS if it is stopped
+      ansible.windows.win_shell: Start-Service W3Svc
+      when: iis_status.stdout == "Stopped"
