@@ -1,0 +1,5 @@
+   - name: Configure global attributes.
+     fortios_system_global:
+        vdom:  "root"
+        system_global:
+            hostname: 'RedHatFW'
