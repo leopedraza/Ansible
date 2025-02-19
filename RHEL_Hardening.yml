@@ -1,5 +1,5 @@
 - name: Linux hardening
-  hosts: linux_servers
+  hosts: "{{ _hosts | default('RHEL') }}"
   gather_facts: yes
 
   tasks:
