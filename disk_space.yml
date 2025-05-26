@@ -1,0 +1,12 @@
+- name: Check /home space
+  hosts: "{{ _hosts | default('RHEL') }}"
+  gather_facts: yes
+
+  tasks:
+    - name: Check /home freespace
+      shell: df /home --output\=avail | tail -1
+      register: home_freespace
+      
+    - fail:
+        msg: /home does not have the minimum space required to continue (3Gb requested). 
+      when: home_freespace.stdout|float is lt 300000000
