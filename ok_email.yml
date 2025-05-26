@@ -1,4 +1,3 @@
----
 - name: Enviar últimas líneas de un log por correo
   hosts: "{{ _hosts | default('RHEL') }}"
   gather_facts: yes
