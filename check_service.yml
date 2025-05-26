@@ -1,0 +1,24 @@
+---
+- name: Verificar que un servicio esté activo en el sistema
+  hosts: "{{ _hosts | default('RHEL') }}"
+  gather_facts: yes
+  become: true
+  vars:
+    nombre_servicio: "{{ _service | default('httpd') }}"  # Este valor será definido por la encuesta (survey)
+
+  tasks:
+    - name: Obtener estado del servicio
+      ansible.builtin.systemd:
+        name: "{{ nombre_servicio }}"
+      register: estado_servicio
+      failed_when: false
+
+    - name: Falla si el servicio no está activo
+      ansible.builtin.fail:
+        msg: "El servicio {{ nombre_servicio }} NO está corriendo."
+      when: estado_servicio.status.ActiveState != "active"
+
+    - name: Confirmar si el servicio está activo
+      ansible.builtin.debug:
+        msg: "El servicio {{ nombre_servicio }} está corriendo correctamente."
+      when: estado_servicio.status.ActiveState == "active"
