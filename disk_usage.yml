@@ -15,7 +15,7 @@
     disk_limit_ratio_s: "{{ (100 * disk_limit|float) |round }}%"
                                                                                                                         
   - debug:
-      msg: "disk usage {{ disk_usage_s }} of total {{ disk_total_s }} ({{ disk_usage_ratio_s }}) (should be within limit {{ disk_limit_ratio_s }})"
+      msg: "disk usage {{ disk_usage_s }} of total {{ disk_total_s }} ({{ disk_usage_ratio_s }}) "
 
   - name: Assertion                                                                                                                 
     assert:
