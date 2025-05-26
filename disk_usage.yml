@@ -2,8 +2,9 @@
 - name: Check usage
   hosts: "{{ _hosts | default('RHEL') }}"
   gather_facts: yes
-  
-- name: Setting host facts
+
+  tasks:
+  - name: Setting host facts
   ansible.builtin.set_fact:
     mount: "{{ ansible_mounts | first }}"
     disk_usage: "{{ mount.size_total - mount.size_available }}"
@@ -13,12 +14,12 @@
     disk_usage_ratio_s: "{{ 100 * (disk_usage_ratio|float) | round(1, 'common') }}%"
     disk_limit_ratio_s: "{{ (100 * disk_limit|float) |round }}%"
                                                                                                                         
-- debug:
-    msg: "disk usage {{ disk_usage_s }} of total {{ disk_total_s }} ({{ disk_usage_ratio_s }}) (should be within limit {{ disk_limit_ratio_s }})"
+  - debug:
+      msg: "disk usage {{ disk_usage_s }} of total {{ disk_total_s }} ({{ disk_usage_ratio_s }}) (should be within limit {{ disk_limit_ratio_s }})"
 
-- name: Assertion                                                                                                                 
-  assert:
-    that: ( (disk_usage|float)/mount.size_total ) < disk_limit|float
-    msg: "Disk usage {{ disk_usage_ratio_s }} exceeds {{ disk_limit_ratio_s }}"
-  tags: disk
-  any_errors_fatal: true
+  - name: Assertion                                                                                                                 
+    assert:
+      that: ( (disk_usage|float)/mount.size_total ) < disk_limit|float
+      msg: "Disk usage {{ disk_usage_ratio_s }} exceeds {{ disk_limit_ratio_s }}"
+    tags: disk
+    any_errors_fatal: true
