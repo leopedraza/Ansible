@@ -1,0 +1,37 @@
+- name: Eliminar logs antiguos y listar archivos pesados
+  hosts: app_servers
+  become: true
+  vars:
+    log_dir: /var/log/       # Ruta al directorio de logs
+    dias_referencia: 3             # Días de antigüedad para eliminar
+    cantidad_archivos: 10          # Número de archivos grandes a listar
+    salida_archivos: /tmp/archivos_pesados.txt
+
+  tasks:
+    - name: Eliminar logs con más de {{ dias_referencia }} días
+      find:
+        paths: "{{ log_dir }}"
+        age: "{{ dias_referencia }}d"
+        patterns: "*.log"
+      register: logs_antiguos
+
+    - name: Eliminar archivos de log antiguos
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ logs_antiguos.files }}"
+      when: logs_antiguos.matched > 0
+
+    - name: Generar listado de archivos que más espacio ocupan
+      shell: |
+        du -ah {{ log_dir }} | sort -rh | head -n {{ cantidad_archivos }} > {{ salida_archivos }}
+      args:
+        executable: /bin/bash
+
+    - name: Mostrar listado de archivos más grandes
+      shell: cat {{ salida_archivos }}
+      register: resultado_archivos
+
+    - name: Mostrar resultado
+      debug:
+        msg: "{{ resultado_archivos.stdout_lines }}"
