@@ -1,5 +1,6 @@
 - name: Eliminar logs antiguos y listar archivos pesados
-  hosts: app_servers
+  hosts: "{{ _hosts | default('RHEL') }}"
+  gather_facts: yes
   become: true
   vars:
     log_dir: /var/log/       # Ruta al directorio de logs
