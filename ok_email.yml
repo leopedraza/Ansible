@@ -1,0 +1,27 @@
+---
+- name: Enviar últimas líneas de un log por correo
+  hosts: "{{ _hosts | default('RHEL') }}"
+  gather_facts: yes
+  become: true
+  vars:
+    ruta_log: /var/log/messages          # Cambia esto por el archivo log deseado
+    lineas: 50                          # Número de líneas que deseas enviar
+    correo_destino: admin@example.com   # Dirección de correo destino
+    asunto_correo: "Últimas {{ lineas }} líneas del log {{ ruta_log }}"
+
+  tasks:
+    - name: Obtener las últimas líneas del log
+      shell: "tail -n {{ lineas }} {{ ruta_log }}"
+      register: log_contenido
+      failed_when: false
+
+    - name: Enviar correo con las últimas líneas del log
+      mail:
+        host: localhost
+        port: 25
+        to: "{{ correo_destino }}"
+        subject: "{{ asunto_correo }}"
+        body: |
+          Estas son las últimas {{ lineas }} líneas del archivo de log {{ ruta_log }}:
+
+          {{ log_contenido.stdout }}
