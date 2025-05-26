@@ -1,6 +1,5 @@
 - name: Check usage
   hosts: "{{ _hosts | default('RHEL') }}"
-  disk_limit_ratio_s: 80
   gather_facts: yes
   
 - set_fact:
