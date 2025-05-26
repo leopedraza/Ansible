@@ -1,4 +1,3 @@
----
 - name: Verificar que un servicio esté activo en el sistema
   hosts: "{{ _hosts | default('RHEL') }}"
   gather_facts: yes
