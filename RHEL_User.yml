@@ -1,9 +1,9 @@
 ---
 - name: Crear un nuevo usuario en la VM Linux
-  hosts: vms
+  hosts: "{{ _hosts | default('RHEL') }}"
   become: yes  # para usar sudo
   vars:
-    nombre_usuario: nuevo_usuario
+    nombre_usuario:  "{{ _nuevo_usuario | default('user') }}"
     shell_usuario: /bin/bash
   tasks:
     - name: Crear el usuario
@@ -16,4 +16,5 @@
     - name: Crear la contraseña del usuario (opcional)
       user:
         name: "{{ nombre_usuario }}"
-        password: "{{ 'MiContraseñaSegura' | password_hash('sha512') }}"
+        password: "{{ 'RedHat12345' | password_hash('sha512') }}"
+
