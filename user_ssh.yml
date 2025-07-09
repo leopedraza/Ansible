@@ -11,7 +11,7 @@
       user:
         name: "{{ nombre_usuario }}"
         shell: "{{ shell_usuario }}"
-        password: "{{ RedHat12345 | password_hash('sha512') }}"
+        password: "{{ 'RedHat12345' | password_hash('sha512') }}"
         state: present
         create_home: yes
 
