@@ -1,0 +1,36 @@
+---
+- name: Crear usuario en RHEL con acceso SSH por contraseña
+  hosts: "{{ _hosts | default('RHEL') }}"
+  become: yes  # para usar sudo
+  vars:
+    nombre_usuario:  "{{ _nuevo_usuario | default('user') }}"
+    shell_usuario: /bin/bash
+
+  tasks:
+    - name: Crear el usuario
+      user:
+        name: "{{ nombre_usuario }}"
+        shell: "{{ shell_usuario }}"
+        password: "{{ RedHat12345 | password_hash('sha512') }}"
+        state: present
+        create_home: yes
+
+    - name: Asegurar que se permita la autenticación por contraseña en SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+        state: present
+        backup: yes
+
+    - name: Asegurar que no esté comentado el parámetro PasswordAuthentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+        state: present
+
+    - name: Reiniciar el servicio SSH
+      service:
+        name: sshd
+        state: restarted
