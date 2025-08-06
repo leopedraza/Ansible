@@ -18,7 +18,7 @@
     - name: Agregar al grupo correcto según el sistema operativo
       ansible.builtin.user:
         name: "{{ nombre_usuario }}"
-        groups: "{{ 'wheel' if ansible_facts.ansible_distribution in ['RedHat', 'CentOS', 'Rocky'] else 'sudo' }}"
+        groups: 'wheel'
         append: yes
 
     - name: Asegurar que se permita la autenticación por contraseña en SSH
