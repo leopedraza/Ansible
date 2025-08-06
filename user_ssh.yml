@@ -14,6 +14,12 @@
         password: "{{ 'RedHat12345' | password_hash('sha512') }}"
         state: present
         create_home: yes
+    
+    - name: Agregar al grupo correcto según el sistema operativo
+      ansible.builtin.user:
+        name: "{{ nombre_usuario }}"
+        groups: "{{ 'wheel' if sistema.ansible_facts.ansible_distribution in ['RedHat', 'CentOS', 'Rocky'] else 'sudo' }}"
+        append: yes
 
     - name: Asegurar que se permita la autenticación por contraseña en SSH
       lineinfile:
